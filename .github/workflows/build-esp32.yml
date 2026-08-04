@@ -2,7 +2,7 @@ name: Build ESP32 Firmware
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -10,31 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Cai arduino-cli
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
-          echo "$PWD/bin" >> $GITHUB_PATH
-
+        run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh && echo "$PWD/bin" >> $GITHUB_PATH
       - name: Cai core ESP32
-        run: |
-          arduino-cli config init
-          arduino-cli config add board_manager.additional_urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
-          arduino-cli core update-index
-          arduino-cli core install esp32:esp32
-
+        run: arduino-cli config init && arduino-cli config add board_manager.additional_urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json && arduino-cli core update-index && arduino-cli core install esp32:esp32
       - name: Cai thu vien TFT_eSPI
         run: arduino-cli lib install "TFT_eSPI"
-
       - name: Copy cau hinh man hinh
         run: if [ -f config/User_Setup.h ]; then cp config/User_Setup.h ~/Arduino/libraries/TFT_eSPI/User_Setup.h; fi
-
       - name: Build firmware
         run: arduino-cli compile --fqbn esp32:esp32:esp32 --output-dir build ESP32_3D_Cube
-
       - name: Upload file .bin
         uses: actions/upload-artifact@v4
         with:
+          name: firmware-bin
+          path: build/*.bin        with:
           name: firmware-bin
           path: build/*.bin        with:
           name: firmware-bin
