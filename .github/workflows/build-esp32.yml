@@ -26,15 +26,17 @@ jobs:
       - name: Cai thu vien TFT_eSPI
         run: arduino-cli lib install "TFT_eSPI"
 
-      - name: Copy cau hinh man hinh (User_Setup.h)
-        run: |
-          if [ -f config/User_Setup.h ]; then
-            cp config/User_Setup.h ~/Arduino/libraries/TFT_eSPI/User_Setup.h
-          fi
+      - name: Copy cau hinh man hinh
+        run: if [ -f config/User_Setup.h ]; then cp config/User_Setup.h ~/Arduino/libraries/TFT_eSPI/User_Setup.h; fi
 
       - name: Build firmware
-        run: |
-          arduino-cli compile --fqbn esp32:esp32:esp32 \
+        run: arduino-cli compile --fqbn esp32:esp32:esp32 --output-dir build ESP32_3D_Cube.ino
+
+      - name: Upload file .bin
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-bin
+          path: build/*.bin          arduino-cli compile --fqbn esp32:esp32:esp32 \
             --output-dir build \
             ESP32_3D_Cube.ino
 
